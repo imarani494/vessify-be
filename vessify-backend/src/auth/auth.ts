@@ -7,21 +7,21 @@ import { env } from "../lib/env.js";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "postgresql",
+    provider: "postgresql"
   }),
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
   trustedOrigins: [env.FRONTEND_URL],
   emailAndPassword: {
-    enabled: true,
+    enabled: true
   },
   plugins: [
     organization(),
     jwt({
       jwt: {
-        expirationTime: "7d",
-      },
-    }),
+        expirationTime: "7d"
+      }
+    })
   ],
   databaseHooks: {
     user: {
@@ -37,8 +37,8 @@ export const auth = betterAuth({
             data: {
               id: crypto.randomUUID(),
               name: `${prefix}'s Organization`,
-              slug,
-            },
+              slug
+            }
           });
 
           await prisma.member.create({
@@ -46,13 +46,13 @@ export const auth = betterAuth({
               id: crypto.randomUUID(),
               userId: user.id,
               organizationId: org.id,
-              role: "owner",
-            },
+              role: "owner"
+            }
           });
-        },
-      },
-    },
-  },
+        }
+      }
+    }
+  }
 });
 
 export type Auth = typeof auth;
