@@ -64,24 +64,27 @@ authRoutes.post("/login", zValidator("json", loginSchema), async (c) => {
 
   const result = await auth.api.signInEmail({
     body: { email, password },
+    asResponse: true,
   });
 
-  if (!result?.user) {
+  if (!result.ok) {
     return c.json({ success: false, message: "Invalid credentials" }, 401);
   }
 
-  // Get JWT token via Better Auth JWT plugin
-  const tokenRes = await auth.api.getToken({
-    headers: c.req.raw.headers,
-  });
+  // Forward the Set-Cookie header from Better Auth so the browser stores the session
+  const setCookie = result.headers.get("set-cookie");
+  if (setCookie) {
+    c.header("set-cookie", setCookie);
+  }
+
+  const body = await result.json() as { user?: { id: string; email: string } };
 
   return c.json({
     success: true,
     user: {
-      id: result.user.id,
-      email: result.user.email,
+      id: body.user?.id ?? "",
+      email: body.user?.email ?? "",
     },
-    token: tokenRes?.token ?? null,
   });
 });
 

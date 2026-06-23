@@ -18,6 +18,7 @@ app.use("*", (0, cors_1.cors)({
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
 }));
+console.log("FRONTEND_URL =", env.FRONTEND_URL);
 app.use("*", (0, logger_1.logger)());
 // Application routes — registered BEFORE the Better Auth wildcard
 app.route("/api/auth", auth_routes_js_1.default);
